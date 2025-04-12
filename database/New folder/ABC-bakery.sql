@@ -1,0 +1,155 @@
+`CREATE TABLE DoiTacNhap
+(
+  TenDoiTac VARCHAR(100) NOT NULL,
+  SDT_benNhap VARCHAR NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  PRIMARY KEY (SDT_benNhap)
+);
+
+CREATE TABLE DoiTacXuat
+(
+  SDT_benXuat VARCHAR(10) NOT NULL,
+  TenDoiTac VARCHAR(100) NOT NULL,
+  PRIMARY KEY (SDT_benXuat)
+);
+
+CREATE TABLE LoaiSanPham
+(
+  TenLoai VARCHAR(100) NOT NULL,
+  MoTa VARCHAR(1000) NOT NULL,
+  HinhAnh  NOT NULL,
+  PRIMARY KEY (TenLoai)
+);
+
+CREATE TABLE LoaiBienNhan
+(
+  ID_LoaiBienNhan INT NOT NULL,
+  TenLoai INT NOT NULL,
+  PRIMARY KEY (ID_LoaiBienNhan)
+);
+
+CREATE TABLE LoaiBillXuat
+(
+  LoaiBill VARCHAR NOT NULL,
+  PRIMARY KEY (LoaiBill)
+);
+
+CREATE TABLE Permission
+(
+  NameOfPermission VARCHAR(100) NOT NULL,
+  From DATE NOT NULL,
+  To DATE NOT NULL,
+  PRIMARY KEY (NameOfPermission)
+);
+
+CREATE TABLE SanPham
+(
+  ID_SanPham VARCHAR(10) NOT NULL,
+  TenSanPham VARCHAR(50) NOT NULL,
+  SoLuong INT NOT NULL,
+  Gia FLOAT NOT NULL,
+  Event Boolean NOT NULL,
+  DonViTinh VARCHAR(10) NOT NULL,
+  GiamGia FLOAT NOT NULL,
+  TrangThai INT NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  TenLoai VARCHAR(100) NOT NULL,
+  PRIMARY KEY (ID_SanPham),
+  FOREIGN KEY (TenLoai) REFERENCES LoaiSanPham(TenLoai),
+  UNIQUE (TenSanPham)
+);
+
+CREATE TABLE NhapBill
+(
+  ID_bill VARCHAR(10) NOT NULL,
+  NgayNhap DATE NOT NULL,
+  TongBill FLOAT NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  SDT_benNhap VARCHAR NOT NULL,
+  PRIMARY KEY (ID_bill),
+  FOREIGN KEY (SDT_benNhap) REFERENCES DoiTacNhap(SDT_benNhap)
+);
+
+CREATE TABLE NhapSanPham
+(
+  Gia FLOAT NOT NULL,
+  SoLuong INT NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  ID_bill VARCHAR(10) NOT NULL,
+  ID_SanPham VARCHAR(10) NOT NULL,
+  FOREIGN KEY (ID_bill) REFERENCES NhapBill(ID_bill),
+  FOREIGN KEY (ID_SanPham) REFERENCES SanPham(ID_SanPham)
+);
+
+CREATE TABLE BienNhan
+(
+  ID_bienNhan VARCHAR(10) NOT NULL,
+  TienCoc FLOAT NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  ID_SanPham VARCHAR(10) NOT NULL,
+  ID_LoaiBienNhan INT NOT NULL,
+  PRIMARY KEY (ID_bienNhan),
+  FOREIGN KEY (ID_SanPham) REFERENCES SanPham(ID_SanPham),
+  FOREIGN KEY (ID_LoaiBienNhan) REFERENCES LoaiBienNhan(ID_LoaiBienNhan)
+);
+
+CREATE TABLE HinhAnh
+(
+  Link VARCHAR NOT NULL,
+  ID_SanPham VARCHAR(10) NOT NULL,
+  FOREIGN KEY (ID_SanPham) REFERENCES SanPham(ID_SanPham)
+);
+
+CREATE TABLE Roles
+(
+  TenRole VARCHAR(100) NOT NULL,
+  NameOfPermission VARCHAR(100) NOT NULL,
+  PRIMARY KEY (TenRole),
+  FOREIGN KEY (NameOfPermission) REFERENCES Permission(NameOfPermission)
+);
+
+CREATE TABLE NhanVien
+(
+  MaSoNhanVien VARCHAR(10) NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  TenRole VARCHAR(100) NOT NULL,
+  PRIMARY KEY (MaSoNhanVien),
+  FOREIGN KEY (TenRole) REFERENCES Roles(TenRole)
+);
+
+CREATE TABLE XuatBill
+(
+  ID_bill VARCHAR(10) NOT NULL,
+  NgayXuat INT NOT NULL,
+  TongBill INT NOT NULL,
+  TheChan INT NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  SDT_benXuat VARCHAR(10) NOT NULL,
+  ID_bienNhan VARCHAR(10) NOT NULL,
+  MaSoNhanVien VARCHAR(10) NOT NULL,
+  LoaiBill VARCHAR NOT NULL,
+  PRIMARY KEY (ID_bill),
+  FOREIGN KEY (SDT_benXuat) REFERENCES DoiTacXuat(SDT_benXuat),
+  FOREIGN KEY (ID_bienNhan) REFERENCES BienNhan(ID_bienNhan),
+  FOREIGN KEY (MaSoNhanVien) REFERENCES NhanVien(MaSoNhanVien),
+  FOREIGN KEY (LoaiBill) REFERENCES LoaiBillXuat(LoaiBill)
+);
+
+CREATE TABLE XuatSanPham
+(
+  SoLuong INT NOT NULL,
+  Gia FLOAT NOT NULL,
+  ID_SanPham VARCHAR(10) NOT NULL,
+  ID_bill VARCHAR(10) NOT NULL,
+  FOREIGN KEY (ID_SanPham) REFERENCES SanPham(ID_SanPham),
+  FOREIGN KEY (ID_bill) REFERENCES XuatBill(ID_bill)
+);
+
+CREATE TABLE DeletedBill
+(
+  NgayHuy INT NOT NULL,
+  TongBill INT NOT NULL,
+  GhiChu VARCHAR(1000) NOT NULL,
+  ID_bill VARCHAR(10) NOT NULL,
+  FOREIGN KEY (ID_bill) REFERENCES XuatBill(ID_bill)
+);`
